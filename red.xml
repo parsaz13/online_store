@@ -1,0 +1,137 @@
+<mxfile>
+  <diagram name="Online Store ERD" id="1">
+    <mxGraphModel dx="1148" dy="580" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- User -->
+        <mxCell id="user" value="User&#10;id (PK)&#10;first_name&#10;last_name&#10;email&#10;username&#10;phone&#10;password&#10;role&#10;is_superuser&#10;is_staff&#10;is_active&#10;date_joined&#10;last_login&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="200" height="320" as="geometry"/>
+        </mxCell>
+        <!-- Address -->
+        <mxCell id="address" value="Address&#10;id (PK)&#10;user_id (FK)&#10;store_id (FK)&#10;address&#10;city&#10;state&#10;postal_code&#10;is_default&#10;phone&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="300" y="40" width="200" height="260" as="geometry"/>
+        </mxCell>
+        <!-- Store -->
+        <mxCell id="store" value="Store&#10;id (PK)&#10;name&#10;manager_id (FK)&#10;description&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="560" y="40" width="200" height="180" as="geometry"/>
+        </mxCell>
+        <!-- Category -->
+        <mxCell id="category" value="Category&#10;id (PK)&#10;name&#10;slug&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="40" y="400" width="200" height="160" as="geometry"/>
+        </mxCell>
+        <!-- Product -->
+        <mxCell id="product" value="Product&#10;id (PK)&#10;title&#10;slug&#10;brand&#10;description&#10;status&#10;category_id (FK)&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="300" y="400" width="200" height="220" as="geometry"/>
+        </mxCell>
+        <!-- ProductImage -->
+        <mxCell id="productimage" value="ProductImage&#10;id (PK)&#10;product_id (FK)&#10;image" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="560" y="400" width="200" height="100" as="geometry"/>
+        </mxCell>
+        <!-- ProductCategory -->
+        <mxCell id="product_category" value="ProductCategory&#10;product_category_id (PK, FK)&#10;category_id (PK, FK)" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="820" y="400" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <!-- StoreItem -->
+        <mxCell id="storeitem" value="StoreItem&#10;id (PK)&#10;product_id (FK)&#10;store_id (FK)&#10;price&#10;quantity&#10;is_listed&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="40" y="600" width="200" height="200" as="geometry"/>
+        </mxCell>
+        <!-- Cart -->
+        <mxCell id="cart" value="Cart&#10;id (PK)&#10;user_id (FK)&#10;discount_id (FK)&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="300" y="650" width="200" height="140" as="geometry"/>
+        </mxCell>
+        <!-- CartItem -->
+        <mxCell id="cartitem" value="CartItem&#10;id (PK)&#10;cart_id (FK)&#10;storeitem_id (FK)&#10;price_at_time&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="560" y="650" width="200" height="140" as="geometry"/>
+        </mxCell>
+        <!-- Order -->
+        <mxCell id="order" value="Order&#10;id (PK)&#10;user_id (FK)&#10;discount_id (FK)&#10;address_id (FK)&#10;status&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="820" y="650" width="200" height="160" as="geometry"/>
+        </mxCell>
+        <!-- OrderItem -->
+        <mxCell id="orderitem" value="OrderItem&#10;id (PK)&#10;order_id (FK)&#10;storeitem_id (FK)&#10;price_at_purchase&#10;quantity&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="650" width="200" height="160" as="geometry"/>
+        </mxCell>
+        <!-- Discount -->
+        <mxCell id="discount" value="Discount&#10;id (PK)&#10;code&#10;discount_type&#10;value&#10;start_time&#10;end_time&#10;usage_limit&#10;per_user_limit&#10;is_active&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="650" width="200" height="220" as="geometry"/>
+        </mxCell>
+        <!-- Comment -->
+        <mxCell id="comment" value="Comment&#10;id (PK)&#10;user_id (FK)&#10;product_id (FK)&#10;store_id (FK)&#10;message&#10;is_published&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="40" y="850" width="200" height="180" as="geometry"/>
+        </mxCell>
+        <!-- Payment -->
+        <mxCell id="payment" value="Payment&#10;id (PK)&#10;order_id (FK)&#10;amount&#10;method&#10;status&#10;authority_code&#10;transaction_id&#10;paid_at&#10;created_at&#10;updated_at&#10;is_deleted" style="shape=swimlane;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="300" y="900" width="200" height="200" as="geometry"/>
+        </mxCell>
+        <!-- Relationships -->
+        <mxCell id="edge1" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="address" target="user">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge2" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="address" target="store">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge3" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="store" target="user">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge4" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="product" target="category">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge5" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="productimage" target="product">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge6" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="product_category" target="product">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge7" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="product_category" target="category">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge8" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="storeitem" target="store">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge9" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="storeitem" target="product">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge10" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="cart" target="user">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge11" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="cart" target="discount">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge12" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="cartitem" target="cart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge13" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="cartitem" target="storeitem">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge14" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="order" target="user">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge15" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="order" target="discount">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge16" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="order" target="address">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge17" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="orderitem" target="order">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge18" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="orderitem" target="storeitem">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge19" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="comment" target="user">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge20" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="comment" target="product">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge21" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="comment" target="store">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge22" style="edgeStyle=elbowEdgeStyle;rounded=1;" edge="1" parent="1" source="payment" target="order">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
