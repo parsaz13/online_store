@@ -1,0 +1,13 @@
+Django>=5.2
+psycopg2-binary>=2.9
+djangorestframework>=3.14
+djangorestframework-simplejwt>=5.2
+django-cors-headers>=4.3
+celery>=5.3
+redis>=5.0
+django-redis>=5.4
+Pillow>=10.0
+pytest>=7.4
+pytest-django>=4.5
+coverage>=7.2
+drf-yasg>=1.21
