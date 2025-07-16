@@ -39,6 +39,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "store",
+    "cart",
+    "orders",
+    "payments",
+    "products",
+    "reviews",
+    "users"
 ]
 
 MIDDLEWARE = [
@@ -77,8 +83,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'online_store_db',
-        'USER': 'parsa',
+        'NAME': 'onlinestore',
+        'USER': 'postgres',
         'PASSWORD': '1234papa',
         'HOST': 'localhost',
         'PORT': '5432',
@@ -137,3 +143,7 @@ CACHES = {
         }
     }
 }
+
+
+AUTH_USER_MODEL = 'users.CustomUser'
+
