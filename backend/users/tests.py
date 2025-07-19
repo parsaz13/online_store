@@ -1,12 +1,12 @@
-from rest_framework.test import APITestCase
-from rest_framework import status
-from django.urls import reverse
-from users.models import CustomUser
 from django.core.cache import cache
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from users.models import CustomUser
 
 
 class UserRegistrationTestCase(APITestCase):
-    
     def setUp(self):
         self.email = "zarchiniparsa68@gmail.com"
         self.password = "1234papa"
@@ -23,7 +23,7 @@ class UserRegistrationTestCase(APITestCase):
         )
 
     def test_user_registration(self):
-        url = reverse('register') 
+        url = reverse('register')
         data = {
             "email": "newuser@example.com",
             "username": "newuser",
@@ -35,7 +35,7 @@ class UserRegistrationTestCase(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(CustomUser.objects.filter(email="newuser@example.com").exists())
-    
+
     def test_send_otp(self):
         url = reverse('get_otp')
         data = {
@@ -50,7 +50,6 @@ class UserRegistrationTestCase(APITestCase):
     def test_verify_otp(self):
         otp = 123456
         cache.set(f"login_otp_{self.email}", otp, timeout=300)
-
         url = reverse('verify_otp')
         data = {
             "email": self.email,

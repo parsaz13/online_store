@@ -9,8 +9,18 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'username','first_name', 'last_name', 'password', 'password2']
-        
+        fields = ['email', 'username', 'first_name', 'last_name', 'password', 'password2']
+
+    def validate_email(self, value):
+        if CustomUser.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already exists.")
+        return value
+
+    def validate(self, data):
+        if data['password'] != data['password2']:
+            raise serializers.ValidationError("Passwords do not match.")
+        return data
+
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
             email=validated_data['email'],
@@ -20,21 +30,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
-    
-    def validate_email(self, value):
-        if CustomUser.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Email already exists.")
-        return value
-
-
-    def validate(self, data):
-        if data['password'] != data['password2']:
-            raise serializers.ValidationError("Passwords do not match.")
-        return data
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        Model = CustomUser
-        exclude = ['password','is_superuser','user_permissions']
-        
+        model = CustomUser
+        exclude = ['password', 'is_superuser', 'user_permissions']

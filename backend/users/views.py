@@ -1,24 +1,28 @@
-#views
+# views.py
 import random
-from django.shortcuts import render
 from django.core.cache import cache
+from django.contrib.auth import authenticate
+from django.shortcuts import render
 from rest_framework import generics
-from .serializers import RegisterSerializer
-from .models import CustomUser
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
+
+from .models import CustomUser
+from .serializers import RegisterSerializer
+
 
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.active()
     serializer_class = RegisterSerializer
-    
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def protected_view(request):
     return Response({"message": f"Hello, {request.user.username}. You have successfully logged in."})
+
 
 @api_view(['POST'])
 def get_otp(request):
@@ -27,42 +31,38 @@ def get_otp(request):
     user = authenticate(email=email, password=password)
     if user is None:
         return Response({"error": "Invalid email or password."}, status=400)
-    
     otp = random.randint(100000, 999999)
     cache.set(f'login_otp_{email}', otp, timeout=300)
     return Response({
         "message": "OTP sent successfully.",
-        "otp": otp  
+        "otp": otp
     })
+
 
 @api_view(['POST'])
 def verify_otp(request):
     email = request.data.get('email')
     otp = request.data.get('otp')
-
     if not email or not otp:
         return Response({"error": "Email and OTP are required."}, status=400)
-
     try:
         otp = int(otp)
     except ValueError:
         return Response({"error": "OTP must be a number."}, status=400)
-
     real_otp = cache.get(f'login_otp_{email}')
     if real_otp != otp:
         return Response({'error': 'Invalid OTP'}, status=400)
-
     try:
         user = CustomUser.objects.get(email=email)
     except CustomUser.DoesNotExist:
         return Response({'error': 'User not found.'}, status=404)
-
     refresh = RefreshToken.for_user(user)
     return Response({
         "refresh": str(refresh),
         "access": str(refresh.access_token),
         "message": "Login verified successfully."
     })
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

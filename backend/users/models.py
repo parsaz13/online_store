@@ -2,7 +2,17 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+class CustomUserQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(is_active=True)
+
 class CustomUserManager(BaseUserManager):
+    def get_queryset(self):
+        return CustomUserQuerySet(self.model, using=self._db)
+
+    def active(self):
+        return self.get_queryset().active()
+
     def create_user(self, email, username, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
@@ -64,17 +74,4 @@ class Address(models.Model):
     
     def __str__(self):
         return f"Address {self.address} - {self.user}"
-
-
-class CustomUserQuerySet(models.QuerySet):
-    def active(self):
-        return self.filter(is_active=True)
-
-
-class CustomUserManager(BaseUserManager):
-    def get_queryset(self):
-        return CustomUserQuerySet(self.model, using=self._db)
-
-    def active(self):
-        return self.get_queryset().active()
 
