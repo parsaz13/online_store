@@ -18,7 +18,7 @@ class Product(models.Model):
     brand = models.CharField(max_length=255)
     description = models.TextField()
     status = models.BooleanField(default=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
@@ -27,10 +27,10 @@ class Product(models.Model):
         return f"{self.title} - {self.category}"
 
 class ProductImage(models.Model):
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE,null=True)
     image = models.ImageField(upload_to='product_images/')
     
     def __str__(self):
-        return f"{self.product_id} - {self.image}"
+        return f"{self.product} - {self.image}"
 
 

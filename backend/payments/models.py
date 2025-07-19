@@ -3,7 +3,7 @@ from orders.models import Order
 from django.conf import settings
 
 class Payment(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE,null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=255)
     status = models.CharField(max_length=255)
