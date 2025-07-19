@@ -8,6 +8,10 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Cart {self.id} - {self.user}"
+
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE,null=True)
     storeitem = models.ForeignKey(StoreItem, on_delete=models.CASCADE,null=True)

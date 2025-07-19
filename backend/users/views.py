@@ -12,7 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 
 class RegisterView(generics.CreateAPIView):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.active()
     serializer_class = RegisterSerializer
     
 @api_view(['GET'])
@@ -63,3 +63,12 @@ def verify_otp(request):
         "access": str(refresh.access_token),
         "message": "Login verified successfully."
     })
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_user(request):
+    user = request.user
+    user.is_deleted = True
+    user.save()
+    return Response({'message': 'User deleted logically.'}, status=200)
+

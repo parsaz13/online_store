@@ -1,9 +1,10 @@
 from django.db import models
 from products.models import Product
+from django.conf import settings
 
 class Store(models.Model):
     name = models.CharField(max_length=255)
-    manager = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE,null=True)
+    manager = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
