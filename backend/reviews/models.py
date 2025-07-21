@@ -7,7 +7,6 @@ from django.conf import settings
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE,null=True)
-    store = models.ForeignKey(Store, on_delete=models.CASCADE,null=True)
     comment = models.TextField()
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True )
@@ -15,4 +14,4 @@ class Comment(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user} - {self.product} - {self.store}"
+        return f"{self.user} - {self.product}"

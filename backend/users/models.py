@@ -73,7 +73,7 @@ class Address(models.Model):
     is_default = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"{self.street} - {self.city} - {self.state} - {self.postal_code} - {self.user}"
+        return f"{self.street} - {self.city} - {self.state}"
 
     class Meta:
         verbose_name_plural = "Addresses"

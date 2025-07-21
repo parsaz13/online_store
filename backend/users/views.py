@@ -1,5 +1,6 @@
 # views.py
 import random
+from .serializers import UserSerializer
 from django.core.cache import cache
 from django.contrib.auth import authenticate
 from django.shortcuts import render
@@ -71,4 +72,11 @@ def delete_user(request):
     user.is_deleted = True
     user.save()
     return Response({'message': 'User deleted logically.'}, status=200)
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 

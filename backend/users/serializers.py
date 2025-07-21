@@ -35,4 +35,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        exclude = ['password', 'is_superuser', 'user_permissions']
+        fields = ['first_name', 'last_name', 'email', 'username', 'phone_number']
+        read_only_fields = ['email', 'username']
+    

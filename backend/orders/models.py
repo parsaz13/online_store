@@ -5,9 +5,15 @@ from store.models import StoreItem
 
 
 class Order(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE,null=True)
-    status = models.CharField(max_length=255)
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
+        ('canceled', 'Canceled'),
+    ]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
+    status = models.CharField(max_length=255, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)

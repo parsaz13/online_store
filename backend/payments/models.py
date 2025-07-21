@@ -9,7 +9,7 @@ class Payment(models.Model):
     status = models.CharField(max_length=255)
     authority_code = models.CharField(max_length=255)
     transaction_id = models.CharField(max_length=255)
-    paid_at = models.DateTimeField()
+    paid_at = models.DateTimeField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
