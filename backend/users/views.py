@@ -3,7 +3,7 @@ import random
 from .serializers import UserSerializer
 from django.core.cache import cache
 from django.contrib.auth import authenticate
-from django.contrib.auth import login
+from django.contrib.auth import login , logout
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
@@ -85,4 +85,12 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_view(request):
+    if request.user.is_authenticated:
+        logout(request)
+        return Response({"message": "Logged out successfully."}, status=200)
+    return Response({"error": "You are not logged in."}, status=400)
 

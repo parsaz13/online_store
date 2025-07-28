@@ -5,7 +5,7 @@ from django.conf import settings
 class Store(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
-    owner  = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True)
+    owner  = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True)
     description = models.TextField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
