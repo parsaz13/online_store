@@ -75,8 +75,7 @@ def verify_otp(request):
 @permission_classes([IsAuthenticated])
 def delete_user(request):
     user = request.user
-    user.is_deleted = True
-    user.save()
+    user.delete()
     return Response({'message': 'User deleted logically.'}, status=200)
 
 class UserProfileView(generics.RetrieveUpdateAPIView):

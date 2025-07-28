@@ -34,10 +34,6 @@ class StoreViewSet(viewsets.ModelViewSet):
     serializer_class = StoreSerializer
     permission_classes = [permissions.IsAuthenticated, HasStoreOwnerRole]
 
-    def perform_destroy(self, instance):
-        instance.is_deleted = True
-        instance.save()
-
     def perform_update(self, serializer):
         serializer.save(owner=self.request.user)
 
@@ -46,6 +42,15 @@ class StoreViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny()]
         return super().get_permissions()
 
+    def destroy(self, request, *args, **kwargs):
+        print("Store destroy called!")
+        instance = self.get_object()
+
+        if instance.owner != request.user:
+            return Response({'error': 'You do not have permission to delete this store.'}, status=403)
+
+        instance.delete()  # حذف کامل از دیتابیس
+        return Response({'message': 'Store permanently deleted.'}, status=204)
 
 
 # StoreItem Views
