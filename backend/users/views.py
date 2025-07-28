@@ -3,6 +3,7 @@ import random
 from .serializers import UserSerializer
 from django.core.cache import cache
 from django.contrib.auth import authenticate
+from django.contrib.auth import login
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
@@ -46,24 +47,29 @@ def verify_otp(request):
     otp = request.data.get('otp')
     if not email or not otp:
         return Response({"error": "Email and OTP are required."}, status=400)
+
     try:
         otp = int(otp)
     except ValueError:
         return Response({"error": "OTP must be a number."}, status=400)
+
     real_otp = cache.get(f'login_otp_{email}')
     if real_otp != otp:
         return Response({'error': 'Invalid OTP'}, status=400)
+
     try:
         user = CustomUser.objects.get(email=email)
     except CustomUser.DoesNotExist:
         return Response({'error': 'User not found.'}, status=404)
+
+    login(request, user)
+
     refresh = RefreshToken.for_user(user)
     return Response({
         "refresh": str(refresh),
         "access": str(refresh.access_token),
         "message": "Login verified successfully."
     })
-
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

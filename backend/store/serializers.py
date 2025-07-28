@@ -9,7 +9,11 @@ class StoreSerializer(serializers.ModelSerializer):
 
 
 class StoreItemSerializer(serializers.ModelSerializer):
+    final_price = serializers.SerializerMethodField()
     class Meta:
         model = StoreItem
         fields = '__all__'
         read_only_fields = ['id', 'final_price']
+
+    def get_final_price(self, obj):
+        return obj.final_price

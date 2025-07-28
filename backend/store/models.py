@@ -12,7 +12,7 @@ class Store(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.name} - {self.manager}"
+        return f"{self.name} - {self.owner}"
 
 class StoreItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE,null=True)
