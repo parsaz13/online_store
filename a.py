@@ -3,6 +3,9 @@ import os
 def extract_py_files_content(folder_path, output_file="all_code.txt"):
     with open(output_file, "w", encoding="utf-8") as outfile:
         for root, dirs, files in os.walk(folder_path):
+            # حذف فولدرهای شامل "migrations" از لیست گشتن
+            dirs[:] = [d for d in dirs if "migrations" not in d.lower()]
+            
             for file in files:
                 if file.endswith(".py"):
                     file_path = os.path.join(root, file)
@@ -16,4 +19,4 @@ def extract_py_files_content(folder_path, output_file="all_code.txt"):
 if __name__ == "__main__":
     folder = input("folder path: ")
     extract_py_files_content(folder)
-    print("All Python files content has been extracted to 'all_code.txt'.")
+    print("Extraction completed. All Python files content has been written to 'all_code.txt'.")
