@@ -3,18 +3,16 @@ from orders.models import Order
 from django.conf import settings
 
 class Payment(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE,null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=255)
     status = models.CharField(max_length=255)
     authority_code = models.CharField(max_length=255)
     transaction_id = models.CharField(max_length=255)
-    paid_at = models.DateTimeField(null=True,blank=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"Payment {self.id} - {self.order}"
-
-
+        return f"Payment {self.id} - Order {self.order.id} ({self.status})"

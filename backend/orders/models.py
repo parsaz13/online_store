@@ -3,7 +3,6 @@ from django.conf import settings
 from users.models import Address
 from store.models import StoreItem
 
-
 class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -22,8 +21,8 @@ class Order(models.Model):
         return f"Order {self.id} - {self.user}"
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE,null=True)
-    storeitem = models.ForeignKey(StoreItem, on_delete=models.CASCADE,null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
+    storeitem = models.ForeignKey(StoreItem, on_delete=models.CASCADE, null=True)
     price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -31,4 +30,4 @@ class OrderItem(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.order} - {self.storeitem}"
+        return f"OrderItem {self.id} - {self.storeitem} ({self.quantity})"
