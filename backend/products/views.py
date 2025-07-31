@@ -1,11 +1,11 @@
-from rest_framework import viewsets, filters
-from rest_framework.permissions import AllowAny
+from rest_framework import viewsets, filters, generics
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
-from store.serializers import StoreItemSerializer
-from store.models import StoreItem
+from store.permissions import HasStoreOwnerRole
+from django.db.models import Q, Sum
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.filter(is_deleted=False)
@@ -18,16 +18,20 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     ordering = ['-created_at']
 
     def get_queryset(self):
-        return self.queryset.prefetch_related('images', 'storeitem_set__store')
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        store_items = StoreItem.objects.filter(product=instance, is_deleted=False, is_listed=True)
-        store_items_data = StoreItemSerializer(store_items, many=True).data
-        data = serializer.data
-        data['store_items'] = store_items_data
-        return Response(data)
+        queryset = self.queryset.prefetch_related('images', 'storeitem_set__store').distinct()
+        min_price = self.request.query_params.get('min_price')
+        max_price = self.request.query_params.get('max_price')
+        brand = self.request.query_params.get('brand')
+        ordering = self.request.query_params.get('ordering')
+        if min_price:
+            queryset = queryset.filter(storeitem__final_price__gte=min_price)
+        if max_price:
+            queryset = queryset.filter(storeitem__final_price__lte=max_price)
+        if brand:
+            queryset = queryset.filter(brand__iexact=brand)
+        if ordering == '-storeitem__sales_count':
+            queryset = queryset.annotate(total_sales=Sum('storeitem__sales_count')).order_by('-total_sales')
+        return queryset
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.filter(is_deleted=False)
@@ -47,7 +51,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
                 'id': category['id'],
                 'name': category['name'],
                 'slug': category['slug'],
-                'description': category['description'],
+                'description': category.get('description', ''),
                 'children': []
             }
             children = queryset.filter(parent_id=category['id'])
@@ -58,3 +62,26 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
         tree = [build_tree(category) for category in serializer.data]
         return Response(tree)
+
+class ProductCreateView(generics.CreateAPIView):
+    queryset = Product.objects.filter(is_deleted=False)
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated, HasStoreOwnerRole]
+
+class CategoryCreateView(generics.CreateAPIView):
+    queryset = Category.objects.filter(is_deleted=False)
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated, HasStoreOwnerRole]
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+class TopSellingProductsView(generics.ListAPIView):
+    queryset = Product.objects.filter(is_deleted=False, storeitem__sales_count__gt=0)
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return self.queryset.prefetch_related('images', 'storeitem_set__store').annotate(
+            total_sales=Sum('storeitem__sales_count')
+        ).order_by('-total_sales').distinct()[:10]
