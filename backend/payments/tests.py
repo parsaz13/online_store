@@ -1,9 +1,7 @@
-from django.test import TestCase
-
-# Create your tests here.
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
+from django.utils import timezone
 from users.models import CustomUser, Address
 from store.models import Store, StoreItem
 from products.models import Product, Category
@@ -77,6 +75,18 @@ class PaymentViewSetTestCase(APITestCase):
         self.assertEqual(Payment.objects.first().amount, 2700.00)
         self.assertEqual(Payment.objects.first().status, 'completed')
 
+    def test_create_duplicate_payment(self):
+        url = reverse('payment-list')
+        data = {"order_id": self.order.id}
+        # پرداخت اول
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # پرداخت دوم (باید خطا بده)
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("Order already has a completed payment.", str(response.data))
+        self.assertEqual(Payment.objects.count(), 1)
+
     def test_list_payments(self):
         Payment.objects.create(
             order=self.order,
@@ -84,7 +94,8 @@ class PaymentViewSetTestCase(APITestCase):
             payment_method='online',
             status='completed',
             authority_code='550e8400-e29b-41d4-a716-446655440000',
-            transaction_id='550e8400-e29b-41d4-a716-446655440001'
+            transaction_id='550e8400-e29b-41d4-a716-446655440001',
+            paid_at=timezone.now()
         )
         url = reverse('payment-list')
         response = self.client.get(url, format='json')
@@ -98,9 +109,10 @@ class PaymentViewSetTestCase(APITestCase):
             payment_method='online',
             status='completed',
             authority_code='550e8400-e29b-41d4-a716-446655440000',
-            transaction_id='550e8400-e29b-41d4-a716-446655440001'
+            transaction_id='550e8400-e29b-41d4-a716-446655440001',
+            paid_at=timezone.now()
         )
         url = reverse('payment-detail', kwargs={'pk': payment.id})
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['amount'], 2700.00)
+        self.assertEqual(float(response.data['amount']), 2700.00)

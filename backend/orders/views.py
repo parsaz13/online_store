@@ -9,6 +9,7 @@ from store.models import StoreItem
 from users.models import Address
 from django.db import transaction
 from rest_framework import permissions
+
 class IsCustomer(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == 'customer'
@@ -52,9 +53,10 @@ class OrderViewSet(viewsets.ModelViewSet):
                         price_at_purchase=storeitem.final_price
                     )
                     storeitem.quantity -= cart_item.quantity
+                    storeitem.sales_count += cart_item.quantity
                     storeitem.save()
                 
-                cart_items.delete()  
+                cart_items.delete()
 
             return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
         except Cart.DoesNotExist:
