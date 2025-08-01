@@ -8,7 +8,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 class StoreItemCreateTestCase(APITestCase):
     def setUp(self):
-        # ایجاد کاربر با نقش store_owner
         self.user = CustomUser.objects.create_user(
             email="seller@example.com",
             username="seller1",
@@ -18,12 +17,9 @@ class StoreItemCreateTestCase(APITestCase):
             phone="09123456789",
             role="store_owner"
         )
-        # گرفتن توکن برای کاربر
         self.token = str(RefreshToken.for_user(self.user).access_token)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token}')
-        # ایجاد دسته‌بندی
         self.category = Category.objects.create(name="Electronics", slug="electronics")
-        # ایجاد محصول
         self.product = Product.objects.create(
             title="Gaming Laptop",
             slug="gaming-laptop",
@@ -31,7 +27,6 @@ class StoreItemCreateTestCase(APITestCase):
             description="A high-performance gaming laptop",
             category=self.category
         )
-        # ایجاد فروشگاه
         self.store = Store.objects.create(
             name="My Store",
             slug="my-store",
@@ -55,7 +50,6 @@ class StoreItemCreateTestCase(APITestCase):
         self.assertEqual(StoreItem.objects.first().final_price, 1350.00)
 
     def test_create_store_item_without_store(self):
-        # حذف فروشگاه برای تست خطا
         self.store.delete()
         url = reverse('store-item-create')
         response = self.client.post(url, self.item_data, format='json')

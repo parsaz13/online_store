@@ -86,7 +86,6 @@ class StoreItemListView(generics.ListAPIView):
     ordering_fields = ['price', 'discount_percentage', 'created_at']
 
 
-# Manual DELETE Endpoint for store
 @api_view(['DELETE'])
 @permission_classes([permissions.IsAuthenticated, HasStoreOwnerRole])
 def delete_store(request, pk):

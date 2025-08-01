@@ -78,10 +78,8 @@ class PaymentViewSetTestCase(APITestCase):
     def test_create_duplicate_payment(self):
         url = reverse('payment-list')
         data = {"order_id": self.order.id}
-        # پرداخت اول
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # پرداخت دوم (باید خطا بده)
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Order already has a completed payment.", str(response.data))

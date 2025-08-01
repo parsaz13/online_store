@@ -21,7 +21,6 @@ class PaymentSerializer(serializers.ModelSerializer):
         except Order.DoesNotExist:
             raise serializers.ValidationError("Invalid or inaccessible order.")
 
-        # چک کردن اینکه سفارش قبلاً پرداخت موفق نداشته باشه
         if Payment.objects.filter(order=order, status='completed', is_deleted=False).exists():
             raise serializers.ValidationError("Order already has a completed payment.")
 

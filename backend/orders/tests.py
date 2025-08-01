@@ -74,8 +74,8 @@ class OrderViewSetTestCase(APITestCase):
         self.assertEqual(OrderItem.objects.count(), 1)
         self.assertEqual(OrderItem.objects.first().quantity, 2)
         self.assertEqual(response.data['total_price'], 2700.00)
-        self.assertEqual(StoreItem.objects.first().quantity, 8)  # موجودی کاهش یافته
-        self.assertEqual(CartItem.objects.filter(is_deleted=False).count(), 0)  # سبد خرید خالی شده
+        self.assertEqual(StoreItem.objects.first().quantity, 8) 
+        self.assertEqual(CartItem.objects.filter(is_deleted=False).count(), 0)
 
     def test_list_orders(self):
         Order.objects.create(user=self.user, address=self.address, status='pending')
