@@ -9,6 +9,7 @@ from store.models import StoreItem
 from users.models import Address
 from django.db import transaction
 from rest_framework import permissions
+from store.tasks import send_order_confirmation_email
 
 class IsCustomer(permissions.BasePermission):
     def has_permission(self, request, view):
