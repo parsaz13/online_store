@@ -30,8 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "cart",
-    "corsheaders",
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -39,10 +38,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_filters",
+    "rest_framework",
+    'drf_yasg',
+    "cart",
+    "corsheaders",
     "orders",
     "payments",
     "products",
-    "rest_framework",
     "reviews",
     "store",
     "users",
