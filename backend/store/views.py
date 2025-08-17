@@ -6,14 +6,14 @@ from rest_framework.response import Response
 
 from store.filters import StoreItemFilter
 from store.models import Store, StoreItem
-from store.permissions import HasStoreOwnerRole
+from store.permissions import IsStoreOwner
 from store.serializers import StoreItemSerializer, StoreSerializer
 
 
 # Store Views
 class StoreCreateView(generics.CreateAPIView):
     serializer_class = StoreSerializer
-    permission_classes = [permissions.IsAuthenticated, HasStoreOwnerRole]
+    permission_classes = [permissions.IsAuthenticated, IsStoreOwner]
 
     def perform_create(self, serializer):
         if Store.objects.filter(owner=self.request.user, is_deleted=False).exists():
@@ -24,7 +24,7 @@ class StoreCreateView(generics.CreateAPIView):
 class StoreViewSet(viewsets.ModelViewSet):
     queryset = Store.objects.filter(is_deleted=False)
     serializer_class = StoreSerializer
-    permission_classes = [permissions.IsAuthenticated, HasStoreOwnerRole]
+    permission_classes = [permissions.IsAuthenticated, IsStoreOwner]
 
     def perform_destroy(self, instance):
         if instance.owner != self.request.user:
@@ -47,7 +47,7 @@ class StoreViewSet(viewsets.ModelViewSet):
 class StoreItemCreateView(generics.CreateAPIView):
     queryset = StoreItem.objects.all()
     serializer_class = StoreItemSerializer
-    permission_classes = [permissions.IsAuthenticated, HasStoreOwnerRole]
+    permission_classes = [permissions.IsAuthenticated, IsStoreOwner]
 
     def perform_create(self, serializer):
         try:
@@ -60,7 +60,7 @@ class StoreItemCreateView(generics.CreateAPIView):
 class StoreItemViewSet(viewsets.ModelViewSet):
     queryset = StoreItem.objects.filter(is_deleted=False)
     serializer_class = StoreItemSerializer
-    permission_classes = [permissions.IsAuthenticated, HasStoreOwnerRole]
+    permission_classes = [permissions.IsAuthenticated, IsStoreOwner]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ['price', 'created_at', 'product__name']
     ordering = ['-created_at']
@@ -87,7 +87,7 @@ class StoreItemListView(generics.ListAPIView):
 
 
 @api_view(['DELETE'])
-@permission_classes([permissions.IsAuthenticated, HasStoreOwnerRole])
+@permission_classes([permissions.IsAuthenticated, IsStoreOwner])
 def delete_store(request, pk):
     try:
         store = Store.objects.get(pk=pk, is_deleted=False)
