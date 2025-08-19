@@ -13,3 +13,4 @@ def send_order_confirmation_email(order_id, user_email):
         [user_email],
         fail_silently=False,
     )
+    return f"Email sent to {user_email} for order {order_id}"

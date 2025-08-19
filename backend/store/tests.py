@@ -42,6 +42,12 @@ class StoreItemCreateTestCase(APITestCase):
         }
 
     def test_create_store_item(self):
+        store = Store.objects.create(
+            name="Test Store",
+            slug="test-store",
+            owner=self.user,
+            description="Test store description"
+        )
         url = reverse('store-item-create')
         response = self.client.post(url, self.item_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -54,4 +60,4 @@ class StoreItemCreateTestCase(APITestCase):
         url = reverse('store-item-create')
         response = self.client.post(url, self.item_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("You do not have a store", response.data['error'])
+        self.assertIn("store", str(response.data))

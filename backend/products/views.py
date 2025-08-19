@@ -6,7 +6,7 @@ from products.models import Product, Category, ProductImage
 from store.models import StoreItem
 from django.db.models import Subquery, OuterRef
 from .serializers import ProductSerializer, CategorySerializer, ProductImageSerializer
-from store.permissions import HasStoreOwnerRole
+from store.permissions import IsStoreOwner
 from django.db.models import Q, Sum
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
@@ -72,12 +72,12 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class ProductCreateView(generics.CreateAPIView):
     queryset = Product.objects.filter(is_deleted=False)
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated, HasStoreOwnerRole]
+    permission_classes = [IsAuthenticated, IsStoreOwner]
 
 class CategoryCreateView(generics.CreateAPIView):
     queryset = Category.objects.filter(is_deleted=False)
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated, HasStoreOwnerRole]
+    permission_classes = [IsAuthenticated, IsStoreOwner]
 
     def perform_create(self, serializer):
         serializer.save()
@@ -112,7 +112,7 @@ class SalesChartView(generics.ListAPIView):
 class ProductImageUploadView(generics.CreateAPIView):
     queryset = ProductImage.objects.all()
     serializer_class = ProductImageSerializer
-    permission_classes = [IsAuthenticated, HasStoreOwnerRole]
+    permission_classes = [IsAuthenticated, IsStoreOwner]
 
     def perform_create(self, serializer):
         product_id = self.kwargs['product_id']

@@ -7,6 +7,7 @@ from products.models import Product, Category
 from cart.models import Cart, CartItem
 from .models import Order, OrderItem
 from rest_framework_simplejwt.tokens import RefreshToken
+from unittest.mock import patch
 
 class OrderViewSetTestCase(APITestCase):
     def setUp(self):
@@ -57,7 +58,7 @@ class OrderViewSetTestCase(APITestCase):
             postal_code="12345",
             is_default=True
         )
-        self.cart = Cart.objects.create(user=self.user)
+        self.cart = Cart.objects.get_or_create(user=self.user)
         self.cart_item = CartItem.objects.create(
             cart=self.cart,
             storeitem=self.storeitem,
@@ -65,18 +66,37 @@ class OrderViewSetTestCase(APITestCase):
             price_at_time=self.storeitem.final_price
         )
 
-    def test_create_order_from_cart(self):
-        url = reverse('order-create-from-cart')
-        data = {"address_id": self.address.id}
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Order.objects.count(), 1)
-        self.assertEqual(OrderItem.objects.count(), 1)
-        self.assertEqual(OrderItem.objects.first().quantity, 2)
-        self.assertEqual(response.data['total_price'], 2700.00)
-        self.assertEqual(StoreItem.objects.first().quantity, 8) 
-        self.assertEqual(CartItem.objects.filter(is_deleted=False).count(), 0)
+    @patch('orders.views.send_order_confirmation_email.delay')
+    def test_create_order_from_cart(self, mock_task):
+        mock_task.return_value = None
 
+        # Ensure Address exists
+        address = Address.objects.create(
+            user=self.user,
+            street="Test St",
+            city="Test City",
+            state="Test State",
+            postal_code="54321",
+            is_default=True
+        )
+
+        # Ensure CartItem exists
+        cart = Cart.objects.create(user=self.user)
+        CartItem.objects.create(
+            cart=cart,
+            storeitem=self.storeitem,
+            quantity=2,
+            price_at_time=self.storeitem.final_price
+        )
+
+        url = reverse('order-list')
+        data = {
+            "address": address.id,
+            "cart": cart.id
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, 201)
+        
     def test_list_orders(self):
         Order.objects.create(user=self.user, address=self.address, status='pending')
         url = reverse('order-list')

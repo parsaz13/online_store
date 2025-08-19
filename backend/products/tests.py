@@ -47,7 +47,10 @@ class ProductViewSetTestCase(APITestCase):
         self.assertEqual(response.data[0]['title'], "Gaming Laptop")
 
     def test_filter_by_category(self):
-        url = reverse('product-list') + '?category__id=1'
+        # Ensure product is attached to the correct category
+        self.product.category = self.category
+        self.product.save()
+        url = reverse('product-list') + f'?category__id={self.category.id}'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
