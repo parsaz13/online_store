@@ -1,6 +1,6 @@
 #serializers
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser , Address
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -31,10 +31,32 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Password must be at least 8 characters long.")
+        return value
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'username', 'phone']
+        fields = ['id','first_name', 'last_name', 'email', 'username', 'phone',"role", ]
         read_only_fields = ['email', 'username']
     
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ['id','label', 'city',  'postal_code','street','state' ,'is_default', 'is_deleted']
+        extra_kwargs = {'is_deleted': {'read_only': True}}
+
+
+
+{
+  "label": "خانه",
+  "state": "تهران",
+  "city": "تهران",
+  "street": "میدان ولیعصر",
+  "postal_code": "1234567890"
+}

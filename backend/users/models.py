@@ -62,6 +62,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class Address(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name='addresses')
+    label = models.CharField(max_length=255, blank=True, null=True)
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=255)

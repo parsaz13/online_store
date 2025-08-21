@@ -6,13 +6,15 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login , logout
 from django.shortcuts import render
 from rest_framework import generics
+from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import CustomUser
-from .serializers import RegisterSerializer
+from .models import CustomUser, Address
+from .serializers import RegisterSerializer, AddressSerializer
+from .tasks import send_login_otp_email 
 
 
 class RegisterView(generics.CreateAPIView):
@@ -33,12 +35,12 @@ def get_otp(request):
     user = authenticate(email=email, password=password)
     if user is None:
         return Response({"error": "Invalid email or password."}, status=400)
+
     otp = random.randint(100000, 999999)
-    cache.set(f'login_otp_{email}', otp, timeout=300)
-    return Response({
-        "message": "OTP sent successfully.",
-        "otp": otp
-    })
+    cache.set(f'login_otp_{email}', otp, timeout=300)  
+    send_login_otp_email.delay(email, otp)
+
+    return Response({"message": "OTP sent to your email."}, status=200)
 
 
 @api_view(['POST'])
@@ -93,3 +95,14 @@ def logout_view(request):
         return Response({"message": "Logged out successfully."}, status=200)
     return Response({"error": "You are not logged in."}, status=400)
 
+
+class AddressViewSet(viewsets.ModelViewSet):
+    queryset = Address.objects.filter(is_deleted=False)
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
